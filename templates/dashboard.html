@@ -1,0 +1,135 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predictive Maintenance Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Header -->
+        <header class="dashboard-header">
+            <div class="header-left">
+                <h1>🔧 Predictive Maintenance Lite</h1>
+                <p>Real-time equipment monitoring and maintenance prediction</p>
+            </div>
+            <div class="header-right">
+                <div class="last-update">
+                    Last Update: <span id="last-update">{{ last_update }}</span>
+                </div>
+                <button id="refresh-data" class="btn-refresh">
+                    🔄 Refresh Data
+                </button>
+            </div>
+        </header>
+
+        <!-- Summary Cards -->
+        <div class="summary-cards">
+            <div class="card">
+                <div class="card-icon">🏭</div>
+                <div class="card-content">
+                    <h3>Total Equipment</h3>
+                    <p id="total-equipment">0</p>
+                </div>
+            </div>
+            <div class="card warning">
+                <div class="card-icon">⚠️</div>
+                <div class="card-content">
+                    <h3>Critical</h3>
+                    <p id="critical-count">0</p>
+                </div>
+            </div>
+            <div class="card alert">
+                <div class="card-icon">🔴</div>
+                <div class="card-content">
+                    <h3>Warning</h3>
+                    <p id="warning-count">0</p>
+                </div>
+            </div>
+            <div class="card success">
+                <div class="card-icon">✅</div>
+                <div class="card-content">
+                    <h3>Healthy</h3>
+                    <p id="healthy-count">0</p>
+                </div>
+            </div>
+            <div class="card info">
+                <div class="card-icon">📊</div>
+                <div class="card-content">
+                    <h3>Avg Health</h3>
+                    <p id="avg-health">0%</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Equipment List -->
+            <div class="equipment-panel">
+                <h2>Equipment Status</h2>
+                <div class="equipment-list" id="equipment-list">
+                    <!-- Equipment items will be loaded here -->
+                </div>
+            </div>
+
+            <!-- Detail Panel -->
+            <div class="detail-panel" id="detail-panel">
+                <div class="detail-header">
+                    <h2>Equipment Details</h2>
+                    <select id="equipment-select" class="equipment-select">
+                        <option value="">Select Equipment</option>
+                        {% for equip in equipment %}
+                        <option value="{{ equip }}">{{ equip }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                
+                <div id="equipment-detail" class="equipment-detail">
+                    <p class="select-prompt">👆 Select equipment to view details</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-section" id="charts-section" style="display: none;">
+            <h2>Sensor Trends</h2>
+            <div class="chart-controls">
+                <div class="time-range-selector">
+                    <button class="time-btn active" data-days="7">7 Days</button>
+                    <button class="time-btn" data-days="14">14 Days</button>
+                    <button class="time-btn" data-days="30">30 Days</button>
+                    <button class="time-btn" data-days="90">90 Days</button>
+                </div>
+            </div>
+            <div class="charts-grid">
+                <div id="temp-chart" class="chart"></div>
+                <div id="vibration-chart" class="chart"></div>
+                <div id="efficiency-chart" class="chart"></div>
+                <div id="health-chart" class="chart"></div>
+            </div>
+        </div>
+
+        <!-- Failure History -->
+        <div class="history-section" id="history-section" style="display: none;">
+            <h2>Failure History</h2>
+            <div id="failure-history" class="failure-history"></div>
+        </div>
+    </div>
+
+    <!-- Loading Overlay -->
+    <div id="loading" class="loading-overlay" style="display: none;">
+        <div class="spinner"></div>
+        <p>Loading data...</p>
+    </div>
+
+    <script>
+        // Pass equipment list to JavaScript
+        window.equipmentList = {{ equipment|tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='js/dashboard.js') }}"></script>
+</body>
+</html>
